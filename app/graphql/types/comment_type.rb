@@ -1,9 +1,8 @@
 Types::CommentType = GraphQL::ObjectType.define do
+  interfaces [Interfaces::Model]
+
   name 'Comment'
   description 'comment for an article'
 
-  field :id, !types.Int
   field :body, !types.String
-  field :createdAt, !types.String, property: :created_at
-  field :updatedAt, !types.String, property: :updated_at
 end
