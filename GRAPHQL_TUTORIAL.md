@@ -13,11 +13,11 @@ The model definitions and graphql queries/types can be adapted to suit the needs
 
   3. To initialise the app with graphql
 
-    - Add to the gemfile
+  - Add to the gemfile
 
       `gem 'graphql', '~>1.7.1'`
 
-    - Then run `rails g graphql:install`
+  - Then run `rails g graphql:install`
 
   4. Add articles and comments tables
 
