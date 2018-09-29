@@ -74,10 +74,10 @@ The model definitions and graphql queries/types can be adapted to suit the needs
     end
   ```
 
-  6. Add an interface to extract the common fields of a model
-    a. Create file graphql/interfaces/model.rb
+  6. Add an interface to extract the common fields of a model:
+  - Create file graphql/interfaces/model.rb
 
-    ```
+  ```
       Interfaces::Model = GraphQL::InterfaceType.define do
         name 'ModelInterface'
 
@@ -85,11 +85,9 @@ The model definitions and graphql queries/types can be adapted to suit the needs
         field :createdAt, !Types::DateTimeType, property: :created_at
         field :updatedAt, !Types::DateTimeType, property: :updated_at
       end
-    ```
+  ```
 
-    b. Create a model to type mapping because when a field's return type is an interface, graphQL needs to figure out which object to use for return type
-
-    Define app/services/graphql_services/type_model_mapping_service.rb
+   - Create a model to type mapping because when a field's return type is an interface, graphQL needs to figure out which object to use for return type. Define app/services/graphql_services/type_model_mapping_service.rb
 
   ```
       # Service to convert Active Record Model to GraphQL Type
@@ -105,7 +103,7 @@ The model definitions and graphql queries/types can be adapted to suit the needs
       end
   ```
 
-    c. Add the following `resolve_type` to the graphqlapp_schema.rb file. Your new file should look like this:
+   - Add the following `resolve_type` to the graphqlapp_schema.rb file. Your new file should look like this:
   ```
       GraphqlappSchema = GraphQL::Schema.define do
         mutation(Types::MutationType)
@@ -117,7 +115,7 @@ The model definitions and graphql queries/types can be adapted to suit the needs
       end
   ```
 
-    d. Define new scalar type for date time:
+   - Define new scalar type for date time:
 
   ```
       Types::DateTimeType = GraphQL::ScalarType.define do
@@ -129,7 +127,7 @@ The model definitions and graphql queries/types can be adapted to suit the needs
       end
   ```
 
-    e. Update graphql/types/article.rb and graphql/types/comment.rb
+   - Update graphql/types/article.rb and graphql/types/comment.rb
 
   ```
       Types::CommentType = GraphQL::ObjectType.define do
@@ -160,7 +158,7 @@ The model definitions and graphql queries/types can be adapted to suit the needs
   7. Create a new folder called `fields`. Fields can have _complexity_ values which describe the computation cost of resolving the field.
 
 
-    a. Add a new file called `files/query_article.rb` and another called `files/query_comment.rb`
+  - Add a new file called `files/query_article.rb` and another called `files/query_comment.rb`
 
   ```
       # Article query
@@ -173,7 +171,7 @@ The model definitions and graphql queries/types can be adapted to suit the needs
         resolve ->(obj, args, ctx){
           Article.find(args[:id])
         }
-  end
+      end
 
   ```
 
@@ -191,7 +189,7 @@ The model definitions and graphql queries/types can be adapted to suit the needs
       end
   ```
 
-    b. Add this to your query file:
+  - Add this to your query file:
 
   ```
       Types::QueryType = GraphQL::ObjectType.define do
@@ -219,4 +217,3 @@ The model definitions and graphql queries/types can be adapted to suit the needs
       }
     }
   ```
-
