@@ -9,7 +9,7 @@ The model definitions and graphql queries/types can be adapted to suit the needs
 
   2. Setup database
 
-    `bundle exec rake db:create`
+    bundle exec rake db:create
 
   3. To initialise the app with graphql
 
