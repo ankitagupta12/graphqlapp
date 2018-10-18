@@ -49,6 +49,7 @@ group :development, :test do
   gem 'faker'
   gem 'rspec-given'
   gem 'rspec-rails', '~> 3.5'
+  gem 'therubyracer', :platforms => :ruby
 end
 
 group :development do
