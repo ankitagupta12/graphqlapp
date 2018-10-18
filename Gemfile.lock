@@ -101,6 +101,9 @@ GEM
     graphql-client (0.12.1)
       activesupport (>= 3.0, < 6.0)
       graphql (~> 1.6)
+    graphql-batch (0.3.9)
+      graphql (>= 0.8, < 2)
+      promise.rb (~> 0.7.2)
     i18n (1.1.0)
       concurrent-ruby (~> 1.0)
     io-like (0.3.0)
@@ -129,6 +132,7 @@ GEM
     nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
     pg (1.1.3)
+    promise.rb (0.7.4)
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -256,6 +260,7 @@ DEPENDENCIES
   graphiql-rails
   graphql (~> 1.8.11)
   graphql-client
+  graphql-batch
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
   pg (>= 0.18, < 2.0)

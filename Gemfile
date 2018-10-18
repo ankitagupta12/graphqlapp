@@ -38,6 +38,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 gem 'graphql-client'
 gem 'graphql', '~>1.8.11'
+gem 'graphql-batch'
 
 gem 'awesome_rails_console'
 
