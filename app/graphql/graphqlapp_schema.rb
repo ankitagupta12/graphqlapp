@@ -4,4 +4,6 @@ GraphqlappSchema = GraphQL::Schema.define do
 
   resolve_type ->(_type, _record, _ctx) do
   end
+
+  use GraphQL::Batch
 end
