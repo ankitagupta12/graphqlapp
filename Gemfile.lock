@@ -97,7 +97,7 @@ GEM
     graphiql-rails (1.4.10)
       railties
       sprockets-rails
-    graphql (1.7.9)
+    graphql (1.8.11)
     graphql-client (0.12.1)
       activesupport (>= 3.0, < 6.0)
       graphql (~> 1.6)
@@ -254,7 +254,7 @@ DEPENDENCIES
   factory_bot_rails
   faker
   graphiql-rails
-  graphql (~> 1.7.1)
+  graphql (~> 1.8.11)
   graphql-client
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
@@ -276,4 +276,4 @@ RUBY VERSION
    ruby 2.3.0p0
 
 BUNDLED WITH
-   1.16.3
+   1.16.4

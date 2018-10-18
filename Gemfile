@@ -36,8 +36,8 @@ gem 'jbuilder', '~> 2.5'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
-gem 'graphql', '~>1.7.1'
 gem 'graphql-client'
+gem 'graphql', '~>1.8.11'
 
 gem 'awesome_rails_console'
 
