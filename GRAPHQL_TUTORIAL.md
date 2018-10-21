@@ -19,14 +19,27 @@ The model definitions and graphql queries/types can be adapted to suit the needs
 
   - Then run `rails g graphql:install`
 
-  4. Add articles and comments tables
+  4. Add customers, tables, and items tables
 
   ```
-    class AddArticles < ActiveRecord::Migration[5.2]
+    class AddCustomers < ActiveRecord::Migration[5.2]
       def change
-        create_table :articles do |t|
-          t.string :title
-          t.text :text
+        create_table :customers do |t|
+          t.string :name
+          t.integer :table_id
+          t.timestamps null: false
+        end
+        add_foreign_key :customers, :tables, dependent: :delete
+      end
+    end
+  ```
+
+  ```
+    class AddTables < ActiveRecord::Migration[5.2]
+      def change
+        create_table :tables do |t|
+          t.string :name
+          t.integer :capacity
           t.timestamps null: false
         end
       end
@@ -34,43 +47,58 @@ The model definitions and graphql queries/types can be adapted to suit the needs
   ```
 
   ```
-    class AddComments < ActiveRecord::Migration[5.2]
+    class AddTableItems < ActiveRecord::Migration[5.2]
       def change
-        create_table :comments do |t|
-          t.text :body
-          t.integer :article_id
+        create_table :items do |t|
+          t.string :name
+          t.integer :customer_id
+          t.text :preferences
           t.timestamps null: false
         end
-        add_foreign_key :comments, :articles, dependent: :delete
+        add_foreign_key :items, :customers, dependent: :delete
       end
     end
   ```
 
-  5. Add app/grpahql/types/comment_type.rb and app/graphql/types/article_type.rb
+  5. Add app/graphql/types/customer_type.rb, app/graphql/types/table_type.rb, and app/graphql/types/item_type.rb
 
   ```
-    Types::ArticleType = GraphQL::ObjectType.define do
-      name 'Article'
-      description 'an article from the blog'
+    Types::CustomerType = GraphQL::ObjectType.define do
+      interfaces [Interfaces::Model]
 
-      field :id, !types.Int
-      field :title, !types.String
-      field :text, !types.String
-      field :createdAt, !types.String, property: :created_at
-      field :updatedAt, !types.String, property: :updated_at
-      field :comments, types[Types::CommentType]
+      name 'Customer'
+      description 'customer of a table'
+
+      field :name, !types.String
+      field :table, Types::TableType
+      field :items, types[Types::ItemType]
     end
   ```
 
   ```
-    Types::CommentType = GraphQL::ObjectType.define do
-      name 'Comment'
-      description 'comment for an article'
+    Types::TableType = GraphQL::ObjectType.define do
+      interfaces [Interfaces::Model]
 
-      field :id, !types.Int
-      field :body, !types.String
-      field :createdAt, !types.String, property: :created_at
-      field :updatedAt, !types.String, property: :updated_at
+      name 'Table'
+      description 'a table in the restaurant'
+
+      field :name, !types.String
+      field :capacity, !types.Int
+      field :customers, types[Types::CustomerType]
+    end
+  ```
+
+  ```
+    Types::ItemType = GraphQL::ObjectType.define do
+      interfaces [Interfaces::Model]
+
+      name 'Item'
+      description 'item ordered by customer'
+
+      field :name, !types.String
+      field :preferences, !types.String
+      field :customer, Types::CustomerType
+      field :status, !Enums::ItemStatus
     end
   ```
 
@@ -87,21 +115,7 @@ The model definitions and graphql queries/types can be adapted to suit the needs
       end
   ```
 
-   - Create a model to type mapping because when a field's return type is an interface, graphQL needs to figure out which object to use for return type. Define app/services/graphql_services/type_model_mapping_service.rb
-
-  ```
-      # Service to convert Active Record Model to GraphQL Type
-      class GraphqlServices::TypeModelMappingService < BaseService
-        MODEL_TYPE_MAPPING = {
-          Article: Types::ArticleType,
-          Comment: Types::CommentType
-        }.freeze
-
-        def perform(model_class)
-          MODEL_TYPE_MAPPING[model_class.to_s.to_sym]
-        end
-      end
-  ```
+   - Create a model to type mapping because when a field's return type is an interface, graphQL needs to figure out which object to use for return type.
 
    - Add the following `resolve_type` to the graphqlapp_schema.rb file. Your new file should look like this:
   ```
@@ -109,8 +123,7 @@ The model definitions and graphql queries/types can be adapted to suit the needs
         mutation(Types::MutationType)
         query(Types::QueryType)
 
-        resolve_type ->(_type, record, _ctx) do
-          GraphqlServices::TypeModelMappingService.new.perform(record.class)
+        resolve_type ->(_type, _record, _ctx) do
         end
       end
   ```
@@ -127,64 +140,56 @@ The model definitions and graphql queries/types can be adapted to suit the needs
       end
   ```
 
-   - Update graphql/types/article.rb and graphql/types/comment.rb
-
+  Add this scalar to the fields to the interface `model.rb`:
   ```
-      Types::CommentType = GraphQL::ObjectType.define do
-        interfaces [Interfaces::Model]
-
-        name 'Comment'
-        description 'comment for an article'
-
-        field :body, !types.String
-      end
+    field :createdAt, !Types::DateTimeType, property: :created_at
+    field :updatedAt, !Types::DateTimeType, property: :updated_at
   ```
-
-  ```
-      Types::ArticleType = GraphQL::ObjectType.define do
-        interfaces [Interfaces::Model]
-
-        name 'Article'
-        description 'an article from the blog'
-
-        field :title, !types.String
-        field :text, !types.String
-        field :comments, types[Types::CommentType]
-      end
-
-  ```
-
 
   7. Create a new folder called `fields`. Fields can have _complexity_ values which describe the computation cost of resolving the field.
 
 
-  - Add a new file called `files/query_article.rb` and another called `files/query_comment.rb`
+  - Add a new file called `files/query_customer.rb`, `files/query_item.rb` and another called `files/query_table.rb`
 
   ```
-      # Article query
-      Fields::QueryArticle = GraphQL::Field.define do
-        description "an article"
-        type(Types::ArticleType)
+      # Customer query
+      Fields::QueryCustomer = GraphQL::Field.define do
+        description "a customer"
+        type(Types::CustomerType)
 
-        argument :id, !types.Int
+        argument :id, types.ID
 
         resolve ->(obj, args, ctx){
-          Article.find(args[:id])
+          Customer.find(args[:id])
         }
       end
 
   ```
 
   ```
-      # Comment query
-      Fields::QueryComment = GraphQL::Field.define do
-        description "an article"
-        type(Types::ArticleType)
+    # Table query
+    Fields::QueryTable = GraphQL::Field.define do
+      description "a table"
+      type(Types::TableType)
 
-        argument :id, !types.Int
+      argument :id, types.ID
+
+      resolve ->(obj, args, ctx){
+        Table.find(args[:id])
+      }
+    end
+  ```
+
+  ```
+      # Item query
+      Fields::QueryItem = GraphQL::Field.define do
+        description "an item"
+        type(Types::ItemType)
+
+        argument :id, types.ID
 
         resolve ->(obj, args, ctx){
-          Comment.find(args[:id])
+          Item.find(args[:id])
         }
       end
   ```
@@ -198,22 +203,22 @@ The model definitions and graphql queries/types can be adapted to suit the needs
         # They will be entry points for queries on your schema.
 
         # TODO: remove me
-        field :article, Fields::QueryArticle
-        field :comment, Fields::QueryComment
+        field :table, Fields::QueryTable
+        field :customer, Fields::QueryCustomer
+        field :item, Fields::QueryItem
       end
   ```
 
   8. Start rails server by typing `rails s` and go to `localhost:3000/graphiql`. Type this query:
   ```
     query{
-      article(id: 1){
-        comments{
-          id
-          body
-        }
+      item(id: 1){
         id
-        title
-        text
+        name
+        preferences
+        status
+        createdAt
+        updatedAt
       }
     }
   ```

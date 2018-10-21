@@ -1,4 +1,4 @@
-# Article query
+# Table query
 Fields::QueryTable = GraphQL::Field.define do
   description "a table"
   type(Types::TableType)
