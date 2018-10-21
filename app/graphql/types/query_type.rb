@@ -4,6 +4,7 @@ Types::QueryType = GraphQL::ObjectType.define do
   # They will be entry points for queries on your schema.
 
   # TODO: remove me
-  field :article, Fields::QueryArticle
-  field :comment, Fields::QueryComment
+  field :table, Fields::QueryTable
+  field :customer, Fields::QueryCustomer
+  field :item, Fields::QueryItem
 end
