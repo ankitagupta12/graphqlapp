@@ -37,12 +37,17 @@ gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
 
 gem 'graphql', '~>1.7.1'
+gem 'graphql-client'
 
 gem 'awesome_rails_console'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'rspec-given'
+  gem 'rspec-rails', '~> 3.5'
 end
 
 group :development do

@@ -1,0 +1,8 @@
+fragment on Item {
+  id
+  name
+  preferences
+  status
+  createdAt
+  updatedAt
+}

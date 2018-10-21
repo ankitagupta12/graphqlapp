@@ -1,0 +1,9 @@
+fragment on Customer {
+  id
+  name
+  table {
+    ...TableFragment
+  }
+  createdAt
+  updatedAt
+}

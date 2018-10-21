@@ -7,4 +7,5 @@ Types::ItemType = GraphQL::ObjectType.define do
   field :name, !types.String
   field :preferences, !types.String
   field :customer, Types::CustomerType
+  field :status, !Enums::ItemStatus
 end

@@ -1,0 +1,7 @@
+fragment on Table {
+  id
+  name
+  capacity
+  createdAt
+  updatedAt
+}
