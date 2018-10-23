@@ -36,8 +36,8 @@ gem 'jbuilder', '~> 2.5'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
-gem 'graphql', '~>1.7.1'
-gem 'graphql-client'
+gem 'graphql'
+gem 'graphql-batch'
 
 gem 'awesome_rails_console'
 
@@ -65,6 +65,7 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
   gem 'chromedriver-helper'
+  gem 'graphql-client'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
