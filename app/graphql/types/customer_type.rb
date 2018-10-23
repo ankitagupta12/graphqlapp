@@ -6,5 +6,7 @@ Types::CustomerType = GraphQL::ObjectType.define do
 
   field :name, !types.String
   field :table, Types::TableType
-  field :items, types[Types::ItemType]
+  field :items, types[Types::ItemType], resolve ->() do
+    123
+  end
 end
